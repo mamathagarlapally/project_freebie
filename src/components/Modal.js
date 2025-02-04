@@ -22,10 +22,10 @@ export default function Modal({closeModal}, {addDiv}) {
     <div className= 'ModalBackground'>
       <div className='ModalContainer'>
       <div className='close'>
-        <button onClick={()=> {closeModal(false)}}><FontAwesomeIcon icon={faTimes} />
-      </button>
+        <h1 className='modal-name'>ADD ITEM</h1>
+        <button className='close-modal' onClick={()=> {closeModal(false)}}><FontAwesomeIcon icon={faTimes} />
+        </button>
       </div>
-      <h1>ADD ITEM</h1>
       
        <form onSubmit = {handleSubmit} className='Modal-content'>
         <h4>Add Photo:</h4>
@@ -33,7 +33,8 @@ export default function Modal({closeModal}, {addDiv}) {
         <h4>Add Description:</h4>
         <textarea className= 'description' name='description'   onChange= {handleChange}  type = 'text'></textarea>
         <h4>Contact No:</h4>
-        <input type='tel' name = 'contactno'  onChange= {handleChange} placeholder='enter your contact number' required></input><br></br><br></br>
+        <input type='
+        tel' name = 'contactno'  onChange= {handleChange} placeholder='enter your contact number'></input><br></br><br></br>
         <button   onClick = {addDiv} className='Add'>Add</button>
        </form>
       </div>
