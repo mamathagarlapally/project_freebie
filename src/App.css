@@ -5,7 +5,7 @@ html, body {
    margin: 0;
    padding: 0;
    height: 100%;
-   overflow: hidden; 
+   overflow: auto; 
 }
 .navbar{
    height: 65px;
@@ -285,7 +285,7 @@ html, body {
 }
 
 .cont-data{
-   display: flex;
+   align-items: flex-start;
 }
 
  .content{

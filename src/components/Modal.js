@@ -2,10 +2,10 @@ import React from 'react'
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
-import { useNavigate } from 'react-router-dom';
+//import { useNavigate } from 'react-router-dom';
 
-export default function Modal({closeModal}) {
-  const navigate = useNavigate();
+export default function Modal({closeModal, CreateDiv}) {
+  //const navigate = useNavigate();
   const [data, setData] = useState({
     description: '', contactno: ''
   });
@@ -18,12 +18,10 @@ export default function Modal({closeModal}) {
   const handleSubmit = (event) => { 
     event.preventDefault(); 
     console.log('Form Data:', data);
+    CreateDiv();
     closeModal(false);
   }; 
-  const handleOnAddClick=()=>{
-    navigate('/');
-    
-  };
+  
   return (
     <div className= 'ModalBackground'>
       <div className='ModalContainer'>
@@ -41,7 +39,7 @@ export default function Modal({closeModal}) {
         <h4>Contact No:</h4>
         <input type='
         tel' name = 'contactno'  onChange= {handleChange} placeholder='enter your contact number'></input><br></br><br></br>
-         <button   onClick = {handleOnAddClick} className='Add'>Add</button>
+         <button   type = "submit" className='Add'>Add</button>
        </form>
       </div>
     </div>
