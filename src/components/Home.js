@@ -1,8 +1,13 @@
 import React from 'react';
-import Maincomponent from './Maincomponent';
+//import Maincomponent from './Maincomponent';
+//import MySpace from './MySpace';
 import {useState} from 'react';
+import Navbar from './Navbar';
+//import Modal from './Modal'; 
+import Maincomponent from './Maincomponent';
 
 export default function Home() {
+  
   const items = [
     { type: 'Apron', title: 'Apron Title', description: 'Apron Description' },
     { type: 'Books', title: 'Book Title', description: 'Book Description' },
@@ -21,7 +26,8 @@ export default function Home() {
     
   return (
     <>
-    <div> 
+    <Navbar></Navbar>
+    <div > 
          <div className = "buttons">
           <button className = "Apron" onClick={()=>handleItemClick('Apron')}><b>Apron</b></button>
           <button className = "Books" onClick = {()=>handleItemClick('Books')}><b>Books</b></button>
@@ -29,9 +35,12 @@ export default function Home() {
           <button className = "qp" onClick = {()=>handleItemClick('qp')}><b>Question Paper</b></button>
           <button className = "Drafter" onClick = {()=>handleItemClick('Drafter')}><b>Drafter</b></button>
           <button className = "other" onClick = {()=>handleItemClick('other')}><b>Other</b></button>
-          {selected && <Maincomponent item={selected}/>}  
+          {selected && <Maincomponent  item = {selected}/>}  
          </div>
-        </div>
+      </div>
+         {/* {openModal && (
+      <Modal closeModal={() => setOpenModal(false)} /> 
+    )} */}
     </>
   )
 }
