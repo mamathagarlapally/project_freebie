@@ -8,8 +8,12 @@ import { faHeart } from '@fortawesome/free-solid-svg-icons';
 export default function MySpace() {
   const [openModal, setOpenModal] = useState(false);
   const [divs, setDivs] = useState([]);
+  const [divds, setDivds] = useState([]);
   const CreateDiv =()=>{
     setDivs([...divs, {id: divs.length+1}])
+  };
+  const CreateDivd = () =>{
+    setDivds([...divds, {id: divds.length + 1}])
   };
   return (
     <>
@@ -23,7 +27,7 @@ export default function MySpace() {
       {divs.map((div)=>(
         <div key={div.id} className='cont-data'><div className = "content">
         <div className='photo' ></div> 
-        <div className='text'>mamathagarlapally
+        <div className='text'>
           <br></br>
           It is a apron , it contains sphn logo on it, it a second hand thing,
           bought in 2022 november
@@ -39,8 +43,22 @@ export default function MySpace() {
       </div>
     </div>
     <div className='tags'>  My Drafts</div><br></br>
+    <div id = "container">
+      {divds.map((divd)=>(
+        <div key={divd.id} className='cont-data'><div className = "content">
+        <div className='photo' ></div> 
+        <div className='text'> 
+           <div className = 'uname'></div>
+           <div className='desc'></div>
+          <br></br>
+          <button className="upload-button">Upload
+          </button>
+        </div>
+      </div></div>
+      ))}
+    </div>    
     <div className='tags'>My Likes</div><br></br>
-     {openModal && <Modal closeModal = {setOpenModal} CreateDiv={CreateDiv} />}
+     {openModal && <Modal closeModal = {setOpenModal} CreateDiv={CreateDiv} CreateDivd={CreateDivd} />}
     </>
 
   )

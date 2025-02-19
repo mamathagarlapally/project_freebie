@@ -89,7 +89,7 @@ html, body {
    background-color: #559DF2;
 }
 
-.Apron:hover, .Drafter:hover, .Calci:hover, .qp:hover, .Books:hover, .other:hover, .add-item:hover, .login-btn:hover, .sign-btn:hover, .reg-btn:hover{
+.Apron:hover, .Drafter:hover, .Calci:hover, .qp:hover, .Books:hover, .other:hover, .add-item:hover, .login-btn:hover, .sign-btn:hover, .reg-btn:hover, .Add:hover, .addtodraft:hover, .upload-button:hover{
    background-color: #2682EE;
 }
 
@@ -169,10 +169,29 @@ html, body {
 }
 
 .Add{
-   justify-content: center;
    background-color: #559DF2;
    height: 30px;
    width: 50px;
+   border-radius: 6px;
+   margin-left: 240px;
+}
+.bts{
+   justify-content: center;
+}
+
+.addtodraft{
+   height: 30px;
+   width: 100px;
+   background-color: #559DF2;
+   border-radius: 6px;
+   margin-left: 225px;
+}
+
+.upload-button{
+   height: 30px;
+   width:100px;
+   border: 2px solid black;
+   background-color: #559DF2;
    border-radius: 6px;
 }
 
@@ -285,9 +304,22 @@ html, body {
 }
 
 .cont-data{
-   align-items: flex-start;
+   display: flex;
 }
-
+#container{
+   display: flex;
+}
+.text{
+   justify-content: space-between;
+}
+.uname{
+   height: 25px;
+   border-bottom: 1px dotted black;
+}
+.desc{
+   height: 150px;
+   border-bottom: 1px dotted black;
+}
  .content{
    margin-top: 50px;
    margin-bottom: 50px;

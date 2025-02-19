@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 //import { useNavigate } from 'react-router-dom';
 
-export default function Modal({closeModal, CreateDiv}) {
+export default function Modal({closeModal, CreateDiv, CreateDivd}) {
   //const navigate = useNavigate();
   const [data, setData] = useState({
     description: '', contactno: ''
@@ -21,6 +21,13 @@ export default function Modal({closeModal, CreateDiv}) {
     CreateDiv();
     closeModal(false);
   }; 
+
+  const handleadddraft = (event)=>{
+    event.preventDefault(); 
+    console.log('Form Data:', data);
+    CreateDivd();
+    closeModal(false);
+  }
   
   return (
     <div className= 'ModalBackground'>
@@ -39,8 +46,9 @@ export default function Modal({closeModal, CreateDiv}) {
         <h4>Contact No:</h4>
         <input type='
         tel' name = 'contactno'  onChange= {handleChange} placeholder='enter your contact number'></input><br></br><br></br>
-         <button   type = "submit" className='Add'>Add</button>
-       </form>
+        <button type = "submit" className='Add'>Add</button>
+       </form><br></br>
+       <button  onClick = {handleadddraft} className = "addtodraft">Save as Draft</button>
       </div>
     </div>
   )
