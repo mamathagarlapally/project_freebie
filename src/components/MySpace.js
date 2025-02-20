@@ -9,12 +9,22 @@ export default function MySpace() {
   const [openModal, setOpenModal] = useState(false);
   const [divs, setDivs] = useState([]);
   const [divds, setDivds] = useState([]);
-  const CreateDiv =()=>{
-    setDivs([...divs, {id: divs.length+1}])
+  const CreateDiv =(data)=>{
+    setDivs([...divs, {id: divs.length+1, description : data.description, contactno: data.contactno }])
+    console.log(data.description, data.contactno);
   };
-  const CreateDivd = () =>{
-    setDivds([...divds, {id: divds.length + 1}])
+  const CreateDivd = (data) =>{
+    setDivds([...divds, {id: divds.length + 1, description: data.description, contactno:data.contactno}])
   };
+  const handleUpload=(id,desc, cont)=>{
+    console.log(desc, cont);
+    const ddata = { description: desc, contactno: cont };
+    setDivds(divds.filter((divd) => divd.id !== id));
+    CreateDiv(ddata);
+
+  };
+  
+
   return (
     <>
     <Navbar/>
@@ -29,8 +39,7 @@ export default function MySpace() {
         <div className='photo' ></div> 
         <div className='text'>
           <br></br>
-          It is a apron , it contains sphn logo on it, it a second hand thing,
-          bought in 2022 november
+          {div.description}<br></br>{div.contactno}
           <button className="like-button">
           < FontAwesomeIcon className='white-heart' icon={faHeart} /> Like
           </button>
@@ -48,10 +57,10 @@ export default function MySpace() {
         <div key={divd.id} className='cont-data'><div className = "content">
         <div className='photo' ></div> 
         <div className='text'> 
-           <div className = 'uname'></div>
-           <div className='desc'></div>
+           <div className = 'uname'>{divd.contactno}</div>
+           <div className='desc'>{divd.description}</div>
           <br></br>
-          <button className="upload-button">Upload
+          <button onClick= {()=>handleUpload(divd.id, divd.description, divd.contactno)} className="upload-button">Upload
           </button>
         </div>
       </div></div>

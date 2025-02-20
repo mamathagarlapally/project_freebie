@@ -2,6 +2,7 @@ import React from 'react'
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
+//import MySpace from './MySpace';
 //import { useNavigate } from 'react-router-dom';
 
 export default function Modal({closeModal, CreateDiv, CreateDivd}) {
@@ -18,14 +19,14 @@ export default function Modal({closeModal, CreateDiv, CreateDivd}) {
   const handleSubmit = (event) => { 
     event.preventDefault(); 
     console.log('Form Data:', data);
-    CreateDiv();
+    CreateDiv(data);
     closeModal(false);
   }; 
 
   const handleadddraft = (event)=>{
     event.preventDefault(); 
     console.log('Form Data:', data);
-    CreateDivd();
+    CreateDivd(data);
     closeModal(false);
   }
   
@@ -44,12 +45,14 @@ export default function Modal({closeModal, CreateDiv, CreateDivd}) {
         <h4>Add Description:</h4>
         <textarea className= 'description' name='description'   onChange= {handleChange}  type = 'text'></textarea>
         <h4>Contact No:</h4>
+      
         <input type='
         tel' name = 'contactno'  onChange= {handleChange} placeholder='enter your contact number'></input><br></br><br></br>
         <button type = "submit" className='Add'>Add</button>
        </form><br></br>
-       <button  onClick = {handleadddraft} className = "addtodraft">Save as Draft</button>
+       <button  onClick = {handleadddraft} className = "addtodraft">Save as Draft</button>       
       </div>
     </div>
+     
   )
 }
