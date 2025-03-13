@@ -5,7 +5,7 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
 //import MySpace from './MySpace';
 //import { useNavigate } from 'react-router-dom';
 
-export default function Modal({closeModal, CreateDiv, CreateDivd}) {
+export default function Modal({closeModal, CreateDiv, CreateDivd, DynamicDiv}) {
   //const navigate = useNavigate();
   const [data, setData] = useState({
     description: '', contactno: ''
@@ -20,6 +20,7 @@ export default function Modal({closeModal, CreateDiv, CreateDivd}) {
     event.preventDefault(); 
     console.log('Form Data:', data);
     CreateDiv(data);
+    DynamicDiv(data);
     closeModal(false);
   }; 
 
@@ -42,6 +43,17 @@ export default function Modal({closeModal, CreateDiv, CreateDivd}) {
        <form onSubmit = {handleSubmit} className='Modal-content'>
         <h4>Add Photo:</h4>
         <button className='Upload'>Upload</button>
+        <br></br>
+        <label>What are you uploading?
+           <select>
+            <option value="apron">Apron</option>
+            <option value="books">Books</option>
+            <option value="calci">Calci</option>
+            <option value="qp">Question papers</option>
+            <option value="drafter">Drafter</option>
+            <option value="other">Other</option>
+           </select>
+        </label>
         <h4>Add Description:</h4>
         <textarea className= 'description' name='description'   onChange= {handleChange}  type = 'text'></textarea>
         <h4>Contact No:</h4>
