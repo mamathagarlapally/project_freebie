@@ -18,7 +18,7 @@ export default function MySpace() {
 
   const CreateDiv =(data)=>{
     setDivs((prevDivs) => [...prevDivs, {id: prevDivs.length+1, description : data.description, contactno: data.contactno }])
-    console.log(data.description, data.contactno);
+    //console.log(data.description, data.contactno);
   };
   const CreateDivd = (data) =>{
     setDivds([...divds, {id: divds.length + 1, description: data.description, contactno:data.contactno}])

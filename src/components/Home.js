@@ -1,5 +1,4 @@
 import React from 'react';
-//import Maincomponent from './Maincomponent';
 //import MySpace from './MySpace';
 import {useState} from 'react';
 import Navbar from './Navbar';

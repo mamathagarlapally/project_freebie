@@ -1,7 +1,9 @@
 import React from 'react'
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
+//import DataContextProvider from '../context/DataContextProvider';
+import DataContext from '../context/DataContext';
 //import MySpace from './MySpace';
 //import { useNavigate } from 'react-router-dom';
 
@@ -10,6 +12,7 @@ export default function Modal({closeModal, CreateDiv, CreateDivd, DynamicDiv}) {
   const [data, setData] = useState({
     description: '', contactno: ''
   });
+  const {addDatatext} = useContext(DataContext);
   const handleChange =(e) =>{
     const {name, value} = e.target;
     setData((prevData) => ({ 
@@ -17,13 +20,11 @@ export default function Modal({closeModal, CreateDiv, CreateDivd, DynamicDiv}) {
       [name]: value}));
   };
   const handleSubmit = (event) => { 
-    event.preventDefault(); 
-    console.log('Form Data:', data);
-    CreateDiv(data);
-    DynamicDiv(data);
-    closeModal(false);
+   event.preventDefault(); 
+     CreateDiv(data);
+     addDatatext(data);
+     closeModal(false);
   }; 
-
   const handleadddraft = (event)=>{
     event.preventDefault(); 
     console.log('Form Data:', data);
