@@ -1,11 +1,12 @@
 import React from 'react';
 import Navbar from './Navbar';
 import Modal from './Modal';
-import {useState} from 'react';
+import {useState, useContext} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import { faGreaterThan } from '@fortawesome/free-solid-svg-icons';
 import { faLessThan } from '@fortawesome/free-solid-svg-icons';
+import DataContext from '../context/DataContext';
 
 export default function MySpace() {
   const [openModal, setOpenModal] = useState(false);
@@ -14,6 +15,7 @@ export default function MySpace() {
   const [animate, setAnimate] = useState(false);
   const [visibleIndex, setVisibleIndex] = useState(0);
   const [slidedirection, setSlidedirection] = useState('');
+  const {addDatatext} = useContext(DataContext);
   const itemsPerPage = 2  
 
   const CreateDiv =(data)=>{
@@ -28,6 +30,7 @@ export default function MySpace() {
     const ddata = { description: desc, contactno: cont };
     setDivds((prevDivds) => prevDivds.filter((divd) => divd.id !== id));
     CreateDiv(ddata);
+    addDatatext(ddata);
   };
   const handleIconslide = () => {
     console.log("Button clicked: Slide forward");

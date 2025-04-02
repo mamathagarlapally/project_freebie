@@ -6,8 +6,9 @@ const DataContextProvider = ({children})=>{
    const addDatatext = (data) => {
     setDatatext((prevDatatext) => [...prevDatatext, data]); // Append new div data
   };
+  const [valueset, setValueset] = useState('null');
    return(
-     <DataContext.Provider value = {{datatext , addDatatext}}>{children}</DataContext.Provider>
+     <DataContext.Provider value = {{datatext , addDatatext,valueset, setValueset}}>{children}</DataContext.Provider>
    )
 };
 

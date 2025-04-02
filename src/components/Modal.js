@@ -10,9 +10,10 @@ import DataContext from '../context/DataContext';
 export default function Modal({closeModal, CreateDiv, CreateDivd, DynamicDiv}) {
   //const navigate = useNavigate();
   const [data, setData] = useState({
-    description: '', contactno: ''
+    description: '', contactno: '' , optionval: ''
   });
   const {addDatatext} = useContext(DataContext);
+  //const {setValueset} = useContext(DataContext);
   const handleChange =(e) =>{
     const {name, value} = e.target;
     setData((prevData) => ({ 
@@ -31,6 +32,7 @@ export default function Modal({closeModal, CreateDiv, CreateDivd, DynamicDiv}) {
     CreateDivd(data);
     closeModal(false);
   }
+
   
   return (
     <div className= 'ModalBackground'>
@@ -46,12 +48,13 @@ export default function Modal({closeModal, CreateDiv, CreateDivd, DynamicDiv}) {
         <button className='Upload'>Upload</button>
         <br></br>
         <label>What are you uploading?
-           <select>
-            <option value="apron">Apron</option>
-            <option value="books">Books</option>
-            <option value="calci">Calci</option>
+           <select name= "optionval" onChange={handleChange}>
+            <option value = {null}></option>
+            <option value="Apron">Apron</option>
+            <option value="Books">Books</option>
+            <option value="Calci">Calci</option>
             <option value="qp">Question papers</option>
-            <option value="drafter">Drafter</option>
+            <option value="Drafter">Drafter</option>
             <option value="other">Other</option>
            </select>
         </label>

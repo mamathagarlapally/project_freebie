@@ -4,25 +4,27 @@ import {useState} from 'react';
 import Navbar from './Navbar';
 //import Modal from './Modal'; 
 import Maincomponent from './Maincomponent';
+//import { useContext } from 'react';
+//import DataContext from '../context/DataContext';
 
 export default function Home() {
-  
+  //const {valueset} = useContext(DataContext);
   const items = [
-    { type: 'Apron', title: 'Apron Title', description: 'Apron Description' },
-    { type: 'Books', title: 'Book Title', description: 'Book Description' },
+    { type: 'Apron', title: 'Apron Title', description: 'Apron Description'},
+    { type: 'Books', title: 'Book Title', description: 'Book Description'},
     { type: 'Calci', title: 'Calci Title', description: ' Description' },
     { type: 'qp', title: 'qp Title', description: ' Description' },
     { type: 'Drafter', title: 'drafter Title', description: ' Description' },
     { type: 'other', title: ' Title', description: ' Description' }
    ];
-   const initialSelectedItem = items.find(item => item.type === 'Apron');
-   const [selected, setSelected] = useState(initialSelectedItem);
-       const handleItemClick = (type) => {
-        const item = items.find(i => i.type === type);
-        setSelected(item);
-       };
-      
-    
+  //const {valueset} = useContext(DataContext);
+  const initialSelectedItem = items.find(item => item.type === 'Apron');
+  const [selected, setSelected] = useState(initialSelectedItem);
+  const handleItemClick = (type) => {
+    const item = items.find(i => i.type === type);
+    setSelected(item);
+
+  };
   return (
     <>
     <Navbar></Navbar>
