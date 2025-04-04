@@ -315,10 +315,10 @@ html, body {
    grid-template-columns: repeat(2, 1fr);
 }
 .text{
-   justify-content: space-between;
+   justify-content: space-between; 
 }
 .uname{
-   height: 25px;
+   height: 35px;
    border-bottom: 1px dotted black;
 }
 .desc{

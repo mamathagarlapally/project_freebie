@@ -10,7 +10,7 @@ import DataContext from '../context/DataContext';
 export default function Modal({closeModal, CreateDiv, CreateDivd, DynamicDiv}) {
   //const navigate = useNavigate();
   const [data, setData] = useState({
-    description: '', contactno: '' , optionval: ''
+    description: '', contactno: '' , optionval: '', count: 0
   });
   const {addDatatext} = useContext(DataContext);
   //const {setValueset} = useContext(DataContext);
@@ -30,6 +30,7 @@ export default function Modal({closeModal, CreateDiv, CreateDivd, DynamicDiv}) {
     event.preventDefault(); 
     console.log('Form Data:', data);
     CreateDivd(data);
+    addDatatext(data);
     closeModal(false);
   }
 
@@ -49,7 +50,7 @@ export default function Modal({closeModal, CreateDiv, CreateDivd, DynamicDiv}) {
         <br></br>
         <label>What are you uploading?
            <select name= "optionval" onChange={handleChange}>
-            <option value = {null}></option>
+            <option value = {null}></option> 
             <option value="Apron">Apron</option>
             <option value="Books">Books</option>
             <option value="Calci">Calci</option>
