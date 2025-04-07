@@ -8,20 +8,25 @@ import DataContext from '../context/DataContext';
 
 export default function Maincomponent({item}) {
   //const [divs, setDivs] = useState([]);
-  const { datatext } = useContext(DataContext);
+  const { datatext, setDatatext } = useContext(DataContext);
   //const [counter, setCounter] = useState(0);
   const filteredItems = datatext.filter(div => div.optionval === item.type);
-  //const {valueset} = useContext(DataContext);
+  //const {setData} = useContext(DataContext);
+  
   //const filteredDivs = datatext.filter(div => div.type === valueset);
   
 
   
   const handleOnClick = (id) => {
-    setData((prevData) => ({
-      ...prevData,
-      count: prevData.count + 1, // ✅ Correctly increments
-    }));
+    console.log("id of the divs")
+    console.log(id);
+    setDatatext((prevDatatext) =>
+      prevDatatext.map((div) =>
+        div.id === id ? { ...div, count: (div.count + 1) } : div
+      )
+    );
   };
+  
  
   return (
     <>
@@ -33,7 +38,8 @@ export default function Maincomponent({item}) {
         <div className='text'> 
            <div className = 'uname'>mamatha_garlapally</div> 
            <div className='desc'>{div.description}</div>
-           <div className = 'contno'>{div.contactno}</div>
+           <div className = 'contno'>{div.contactno}
+           </div>
           <br></br>
            <button onClick = {()=>handleOnClick(div.id)} className="like-button">
                     < FontAwesomeIcon className='white-heart' icon={faHeart} /> {div.count}

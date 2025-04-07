@@ -314,12 +314,14 @@ html, body {
    display: grid;
    grid-template-columns: repeat(2, 1fr);
 }
-.text{
+/* .text{
    justify-content: space-between; 
-}
+} */
 .uname{
+   width: auto;
    height: 35px;
    border-bottom: 1px dotted black;
+   background-color: #559DF2;
 }
 .desc{
    height: 150px;
@@ -375,10 +377,10 @@ html, body {
    border-right: 2px solid black;
  }
 
- .text {
+ /* .text {
    flex: 1;
    padding-left: 10px; 
- }
+ } */
 
  .like-button{
    border: none;

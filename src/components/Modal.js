@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState, useContext } from 'react';
+import {useContext } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 //import DataContextProvider from '../context/DataContextProvider';
@@ -9,11 +9,12 @@ import DataContext from '../context/DataContext';
 
 export default function Modal({closeModal, CreateDiv, CreateDivd, DynamicDiv}) {
   //const navigate = useNavigate();
-  const [data, setData] = useState({
-    description: '', contactno: '' , optionval: '', count: 0
-  });
+  // const [data, setData] = useState({
+  //   description: '', contactno: '' , optionval: '', count: 0
+  // });
   const {addDatatext} = useContext(DataContext);
-  //const {setValueset} = useContext(DataContext);
+  const {setData} = useContext(DataContext);
+  const {data} = useContext(DataContext);
   const handleChange =(e) =>{
     const {name, value} = e.target;
     setData((prevData) => ({ 
