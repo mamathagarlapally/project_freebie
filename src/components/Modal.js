@@ -2,10 +2,8 @@ import React from 'react'
 import {useContext } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
-//import DataContextProvider from '../context/DataContextProvider';
 import DataContext from '../context/DataContext';
-//import MySpace from './MySpace';
-//import { useNavigate } from 'react-router-dom';
+
 
 export default function Modal({closeModal, CreateDiv, CreateDivd, DynamicDiv}) {
   //const navigate = useNavigate();
@@ -31,7 +29,7 @@ export default function Modal({closeModal, CreateDiv, CreateDivd, DynamicDiv}) {
     event.preventDefault(); 
     console.log('Form Data:', data);
     CreateDivd(data);
-    addDatatext(data);
+    //addDatatext(data);
     closeModal(false);
   }
 

@@ -89,7 +89,7 @@ html, body {
    background-color: #559DF2;
 }
 
-.Apron:hover, .Drafter:hover, .Calci:hover, .qp:hover, .Books:hover, .other:hover, .add-item:hover, .login-btn:hover, .sign-btn:hover, .reg-btn:hover, .Add:hover, .addtodraft:hover, .upload-button:hover{
+.Apron:hover, .Drafter:hover, .Calci:hover, .qp:hover, .Books:hover, .other:hover, .add-item:hover, .login-btn:hover, .sign-btn:hover, .reg-btn:hover, .Add:hover, .addtodraft:hover, .upload-button:hover, .delete:hover{
    background-color: #2682EE;
 }
 
@@ -190,11 +190,19 @@ html, body {
 .upload-button{
    height: 30px;
    width:100px;
+   margin-left: 30px;
    border: 2px solid black;
    background-color: #559DF2;
    border-radius: 6px;
 }
-
+.delete{
+   height: 30px;
+   width: 100px;
+   margin-left: 30px;
+   border: 2px solid black;
+   background-color: #559DF2;
+   border-radius: 6px;
+}
 .data-item{
    margin-top : 20px;
    margin-left: 30px;
@@ -317,15 +325,16 @@ html, body {
 /* .text{
    justify-content: space-between; 
 } */
-.uname{
-   width: auto;
-   height: 35px;
-   border-bottom: 1px dotted black;
+.u_name{
+   height: 50px;
+   width: 300px;
+   border-top-right-radius: 10px;
+   border-bottom: 2px solid black;
    background-color: #559DF2;
 }
 .desc{
-   height: 150px;
-   border-bottom: 1px dotted black;
+   height: 200px;
+   border-bottom: 1px solid black;
 }
  .content{
    margin-top: 50px;

@@ -16,6 +16,7 @@ export default function MySpace() {
   const [visibleIndex, setVisibleIndex] = useState(0);
   const [slidedirection, setSlidedirection] = useState('');
   const {addDatatext} = useContext(DataContext);
+  const {data} = useContext(DataContext);
   const itemsPerPage = 2  
 
   const CreateDiv =(data)=>{
@@ -30,7 +31,14 @@ export default function MySpace() {
     const ddata = { description: desc, contactno: cont };
     setDivds((prevDivds) => prevDivds.filter((divd) => divd.id !== id));
     CreateDiv(ddata);
-    addDatatext(ddata);
+    addDatatext(data);
+  };
+  const handleDeleteupload = (id) =>{
+    setDivs((prevDivs) => prevDivs.filter((div) => div.id !== id));
+    
+  }
+  const handleDelete = (id)=>{
+    setDivds((prevDivds) => prevDivds.filter((divd) => divd.id !==id));
   };
   const handleIconslide = () => {
     console.log("Button clicked: Slide forward");
@@ -95,6 +103,9 @@ export default function MySpace() {
           <button className="like-button">
           < FontAwesomeIcon className='white-heart' icon={faHeart} /> Like
           </button>
+          <button onClick={()=>handleDeleteupload(div.id)} className='delete'>Delete</button>
+          <br></br><br></br>
+          <button className='delete'>Hide</button>
         </div>
       </div></div>
       ))}
@@ -113,6 +124,7 @@ export default function MySpace() {
           <br></br>
           <button onClick= {()=>handleUpload(divd.id, divd.description, divd.contactno)} className="upload-button">Upload
           </button>
+          <button onClick= {()=>handleDelete(divd.id)}className='delete'>Delete</button>
         </div>
       </div></div>
       ))}

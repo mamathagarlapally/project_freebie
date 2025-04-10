@@ -12,11 +12,7 @@ export default function Maincomponent({item}) {
   //const [counter, setCounter] = useState(0);
   const filteredItems = datatext.filter(div => div.optionval === item.type);
   //const {setData} = useContext(DataContext);
-  
   //const filteredDivs = datatext.filter(div => div.type === valueset);
-  
-
-  
   const handleOnClick = (id) => {
     console.log("id of the divs")
     console.log(id);
@@ -36,7 +32,7 @@ export default function Maincomponent({item}) {
         <div key={div.id} className={`cont-data ${div.id % 2 === 0 ? 'even': 'odd'}`}><div className = "content">
         <div className='photo' ></div> 
         <div className='text'> 
-           <div className = 'uname'>mamatha_garlapally</div> 
+           <div className = 'u_name'>mamatha_garlapally</div> 
            <div className='desc'>{div.description}</div>
            <div className = 'contno'>{div.contactno}
            </div>
