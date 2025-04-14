@@ -15,13 +15,23 @@ export default function MySpace() {
   const [animate, setAnimate] = useState(false);
   const [visibleIndex, setVisibleIndex] = useState(0);
   const [slidedirection, setSlidedirection] = useState('');
-  const {addDatatext} = useContext(DataContext);
+  const {addDatatext, setDatatext} = useContext(DataContext);
   const {data} = useContext(DataContext);
-  const itemsPerPage = 2  
+  const itemsPerPage = 2 
+  const {datatext} = useContext(DataContext);
 
+  
+
+  const handleHide=(id)=>{
+    setDatatext((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, hidden: !item.hidden } : item
+      )
+    );
+  };
   const CreateDiv =(data)=>{
-    setDivs((prevDivs) => [...prevDivs, {id: prevDivs.length+1, description : data.description, contactno: data.contactno }])
-    //console.log(data.description, data.contactno);
+     setDivs((prevDivs) => [...prevDivs, {id: prevDivs.length+1, description : data.description, contactno: data.contactno }])
+     //console.log(data.description, data.contactno);
   };
   const CreateDivd = (data) =>{
     setDivds([...divds, {id: divds.length + 1, description: data.description, contactno:data.contactno}])
@@ -35,7 +45,7 @@ export default function MySpace() {
   };
   const handleDeleteupload = (id) =>{
     setDivs((prevDivs) => prevDivs.filter((div) => div.id !== id));
-    
+    setDatatext((prev) => prev.filter((div)=> div.id !== id));
   }
   const handleDelete = (id)=>{
     setDivds((prevDivds) => prevDivds.filter((divd) => divd.id !==id));
@@ -93,10 +103,10 @@ export default function MySpace() {
         >
       <FontAwesomeIcon className="icon" icon={faLessThan} />
         </button>
-    <div  id = "container">
-    {divs.slice(visibleIndex, visibleIndex + itemsPerPage).map((div) => (
-        <div key={div.id} className={animate ? (slidedirection === 'right' ? 'div-animate-right' : 'div-animate-left') : ''}><div className="content">
-        <div className='photo' ></div> 
+    <div id = "container">
+      {datatext.slice(visibleIndex, visibleIndex + itemsPerPage).map((div)=>(
+        <div key ={div.id} className={animate? (slidedirection === 'right'? 'div-animate-right': "div-animate-left"): ''}><div className='content'>
+          <div className='photo' ></div> 
         <div className='text'>
           <br></br>
           {div.description}<br></br>{div.contactno}
@@ -105,11 +115,12 @@ export default function MySpace() {
           </button>
           <button onClick={()=>handleDeleteupload(div.id)} className='delete'>Delete</button>
           <br></br><br></br>
-          <button className='delete'>Hide</button>
+          <button onClick={()=>handleHide(div.id)} className='delete'>{div.hidden? 'Show': 'Hide'}</button>
         </div>
-      </div></div>
-      ))}
-    </div>    
+      </div>
+        </div>
+       ))}
+    </div>
     <div >
           <button className='add-item' onClick = {()=>{setOpenModal(true);}}><b>Add Item</b></button>
       </div>
@@ -131,6 +142,6 @@ export default function MySpace() {
     </div>    
     <div className='tags'>My Likes</div><br></br></div>
      {openModal && <Modal closeModal = {setOpenModal} CreateDiv={CreateDiv} CreateDivd={CreateDivd}  />}
-    </>
+   </>
   )
 }

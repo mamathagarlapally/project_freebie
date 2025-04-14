@@ -29,7 +29,9 @@ export default function Maincomponent({item}) {
     <div>
     <div id = "component">
       {filteredItems.map((div)=>(
-        <div key={div.id} className={`cont-data ${div.id % 2 === 0 ? 'even': 'odd'}`}><div className = "content">
+        
+        <div key={div.id} className={`cont-data ${div.id % 2 === 0 ? 'even': 'odd'}`}>
+          {!div.hidden && (<div className = "content">
         <div className='photo' ></div> 
         <div className='text'> 
            <div className = 'u_name'>mamatha_garlapally</div> 
@@ -41,7 +43,8 @@ export default function Maincomponent({item}) {
                     < FontAwesomeIcon className='white-heart' icon={faHeart} /> {div.count}
            </button>
         </div>
-      </div></div>
+      </div>
+          )}</div>
       ))}
     </div> 
     </div> 

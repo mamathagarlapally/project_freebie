@@ -5,7 +5,7 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import DataContext from '../context/DataContext';
 
 
-export default function Modal({closeModal, CreateDiv, CreateDivd, DynamicDiv}) {
+export default function Modal({closeModal, CreateDiv, CreateDivd}) {
   //const navigate = useNavigate();
   // const [data, setData] = useState({
   //   description: '', contactno: '' , optionval: '', count: 0

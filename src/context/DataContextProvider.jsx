@@ -10,6 +10,7 @@ const DataContextProvider = ({children})=>{
     const newItem = {
       ...data,
       id: `${Date.now()}-${Math.floor(Math.random() * 10000)}`,
+      hidden: false,
     };
     setDatatext((prev) => [...prev, newItem]);
   };
