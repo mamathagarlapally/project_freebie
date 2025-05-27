@@ -11,8 +11,7 @@ import DataContextProvider from './context/DataContextProvider';
 
 function App() {
   const [isLoggedin, setIsLoggedin] = useState(false);
-  const handleLogin =(userName, password)=>{
-    console.log('user details:',{userName, password});
+  const handleLogin =()=>{
     setIsLoggedin(true);
   };
    return (

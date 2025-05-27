@@ -1,12 +1,29 @@
-import React from 'react';
+import React, {useState} from 'react';
 import loginPage from './login-page.png';
+import axios from 'axios';
 import {useNavigate} from 'react-router-dom';
 
 
 export default function Signup() {
+  const [username, setUsername] = useState('');
+  const [pwd, setPwd] = useState('');
+  const [cpwd, setCpwd] = useState('');
   const navigate = useNavigate();
-  const handleRegister = ()=>{
-     navigate('/Login');
+  const handleRegister = async (e)=>{
+    e.preventDefault();
+    if(pwd !== cpwd){
+      alert("Passwords do not match! please try again");
+      return;
+    }
+    try {
+      await axios.post('http://localhost:5000/api/Signup', {
+      uname : username,
+      pwd : pwd
+      });
+      navigate('/Login');
+    } catch(err){
+      console.log(err);
+    }
   }
   return (
     <div>
@@ -19,12 +36,12 @@ export default function Signup() {
         <label className = 'welcome'>Welcome!</label>
         <div className='uname'>
           <label className='uname-lbl'>Username</label>
-          <input className='inputf' type = "username" placeholder='enter username' ></input></div>
+          <input className='inputf' type = "username" placeholder='enter username' onChange={(e)=>setUsername(e.target.value)}></input></div>
         <div className='pwd'>
           <label>Password</label>
-          <input className='inputf' type = "password" placeholder='enter password'></input><br></br>
+          <input className='inputf' type = "password" placeholder='enter password' onChange={(e)=>setPwd(e.target.value)}></input><br></br>
           <label>Confirm Password</label>
-          <input className='inputf' type = "password" placeholder='enter password again'></input>
+          <input className='inputf' type = "password" placeholder='enter password again' onChange = {(e)=>setCpwd(e.target.value)}></input>
         </div ><br></br>
         <button  onClick = {handleRegister} className= "reg-btn" type = "submit">Register</button><br></br>
       </form>

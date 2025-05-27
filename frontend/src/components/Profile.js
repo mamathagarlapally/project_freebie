@@ -26,8 +26,21 @@ export default function Profile() {
         </div>
       )}
 
+
+
       </div>
-    </>
-    
+      <div className='profile-box'>
+        <div className='profile-pic-box'>
+        <div className="profile-pic-wrapper">
+        <div className="edit-icon">📷</div>
+        </div>
+        
+        </div>
+        <div className="profile-info">
+        <p className="username">Username</p>
+      <button className='change-pwd'>Change password?</button>
+     </div>
+      </div>
+    </>  
   )
 }

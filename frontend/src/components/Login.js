@@ -1,4 +1,5 @@
-import React from 'react'
+import React from 'react';
+import axios from 'axios';
 import {useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import loginPage from './login-page.png';
@@ -6,10 +7,28 @@ export default function Login({onLogin}) {
   const [userName, setUserName] =useState('');
   const  [password, setPassword] = useState('');
   const navigate = useNavigate();
-  const handleLogin =(event)=>{
+  const handleLogin =async(event)=>{
     event.preventDefault();
-    onLogin(userName, password);
-    navigate('/');
+    if (!userName || !password) {
+      alert("Please enter both username and password.");
+      return;
+    }
+    try{
+      const res = await axios.post('http://localhost:5000/api/Login',{
+        username :userName,
+        password: password
+      });
+      if(res.data.message === "Login successful!"){
+        onLogin();
+        navigate('/');
+      }
+      else {
+        alert("incorrect username or password");
+      } 
+    }
+    catch(err){
+      console.log(err);
+    }
   }
   const handleSignup  = ()=>{
      navigate('/Signup');
