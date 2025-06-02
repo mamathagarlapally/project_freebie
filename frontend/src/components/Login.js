@@ -7,6 +7,8 @@ export default function Login({onLogin}) {
   const [userName, setUserName] =useState('');
   const  [password, setPassword] = useState('');
   const navigate = useNavigate();
+  
+
   const handleLogin =async(event)=>{
     event.preventDefault();
     if (!userName || !password) {
@@ -21,6 +23,7 @@ export default function Login({onLogin}) {
       if(res.data.message === "Login successful!"){
         onLogin();
         navigate('/');
+        localStorage.setItem("token", res.data.token);
       }
       else {
         alert("incorrect username or password");

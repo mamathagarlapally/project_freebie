@@ -9,22 +9,29 @@ export default function Signup() {
   const [pwd, setPwd] = useState('');
   const [cpwd, setCpwd] = useState('');
   const navigate = useNavigate();
+
   const handleRegister = async (e)=>{
     e.preventDefault();
-    if(pwd !== cpwd){
-      alert("Passwords do not match! please try again");
+    if (pwd !== cpwd) {
+      alert("Passwords do not match! Please try again.");
       return;
     }
     try {
       await axios.post('http://localhost:5000/api/Signup', {
-      uname : username,
-      pwd : pwd
-      });
-      navigate('/Login');
-    } catch(err){
-      console.log(err);
-    }
-  }
+       uname: username,
+       pwd: pwd
+    });
+     navigate('/Login');
+    } catch (err) {
+    if (err.response && err.response.status === 400) {
+    alert(err.response.data.message); // Show custom message from backend
+    } else {
+    alert("Something went wrong. Please try again.");
+    console.error(err);
+   }
+   }
+
+  };
   return (
     <div>
       <div className='bgc'>

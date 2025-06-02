@@ -1,7 +1,8 @@
 import React from 'react';
+import axios from 'axios';
 import Navbar from './Navbar';
 import Modal from './Modal';
-import {useState, useContext} from 'react';
+import {useState, useContext, useEffect} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import { faGreaterThan } from '@fortawesome/free-solid-svg-icons';
@@ -10,42 +11,93 @@ import DataContext from '../context/DataContext';
 
 export default function MySpace() {
   const [openModal, setOpenModal] = useState(false);
-  const [divs, setDivs] = useState([]);
+  //const [divs, setDivs] = useState([]);
   const [divds, setDivds] = useState([]);
   const [animate, setAnimate] = useState(false);
   const [visibleIndex, setVisibleIndex] = useState(0);
   const [slidedirection, setSlidedirection] = useState('');
-  const {addDatatext, setDatatext} = useContext(DataContext);
+  //const {addDatatext, setDatatext} = useContext(DataContext);
+  const {addDatatext} = useContext(DataContext);
   const {data} = useContext(DataContext);
   const itemsPerPage = 2 
   const {datatext} = useContext(DataContext);
-
+  const [myItems, setMyItems] = useState([]);
   
+  
+  useEffect (()=>{
+    const fetchMyitems = async() =>{
+      try{
+        const token = localStorage.getItem('token');
+        const res = await axios.get('http://localhost:5000/api/myitems', {
+          headers:{
+            Authorization: `Bearer ${token}`
+          }
+        });
+        setMyItems(res.data);
+      } catch(err){
+        console.error("failed to fetch items", err);
+      }
+    };
+    fetchMyitems();
+  },[]);
 
-  const handleHide=(id)=>{
-    setDatatext((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, hidden: !item.hidden } : item
-      )
-    );
+  useEffect(() => {
+  // Clean up any old preview URLs when component unmounts or data changes
+  return () => {
+    datatext.forEach(item => {
+      if (item.preview) URL.revokeObjectURL(item.preview);
+    });
+    divds.forEach(item => {
+      if (item.preview) URL.revokeObjectURL(item.preview);
+    });
   };
-  const CreateDiv =(data)=>{
-     setDivs((prevDivs) => [...prevDivs, {id: prevDivs.length+1, description : data.description, contactno: data.contactno }])
-     //console.log(data.description, data.contactno);
+}, [datatext, divds]);
+
+
+  const handleHide= async(id)=>{
+    try{
+      const item = myItems.find(i => i.item_id === id);
+      if (!item) return;
+
+      const newHidden = item.hidden ? 0 : 1;
+
+      await axios.post('http://localhost:5000/api/handlehide',{
+        id:id,
+        hidden: newHidden
+      });
+      setMyItems(prev =>
+        prev.map(i =>
+          i.item_id === id ? { ...i, hidden: newHidden } : i
+        )
+      );
+    } catch (err){
+      console.error("Failed to update hidden state:", err);
+    }
   };
+  // const CreateDiv =(data)=>{
+  //    setDivs((prevDivs) => [...prevDivs, {id: prevDivs.length+1, description : data.description, contactno: data.contactno }])
+  //    //console.log(data.description, data.contactno);
+  // };
   const CreateDivd = (data) =>{
-    setDivds([...divds, {id: divds.length + 1, description: data.description, contactno:data.contactno}])
+    setDivds([...divds, {id: divds.length + 1, description: data.description, contactno:data.contactno, photo: data.photo,
+      preview: data.preview}])
   };
   const handleUpload=(id, desc, cont)=>{
     console.log(desc, cont);
-    const ddata = { description: desc, contactno: cont };
+    //const ddata = { description: desc, contactno: cont };
     setDivds((prevDivds) => prevDivds.filter((divd) => divd.id !== id));
-    CreateDiv(ddata);
+    //CreateDiv(ddata);
     addDatatext(data);
   };
-  const handleDeleteupload = (id) =>{
-    setDivs((prevDivs) => prevDivs.filter((div) => div.id !== id));
-    setDatatext((prev) => prev.filter((div)=> div.id !== id));
+  const handleDeleteupload = async(id) =>{
+    try{
+      await axios.post('http://localhost:5000/api/handledeleteupload', {
+        id:id
+      });
+    } catch(err){
+      console.error("Failed to delete item:", err);
+    }
+    
   }
   const handleDelete = (id)=>{
     setDivds((prevDivds) => prevDivds.filter((divd) => divd.id !==id));
@@ -58,7 +110,7 @@ export default function MySpace() {
   
     setTimeout(() => {
       setVisibleIndex((prevIndex) => {
-        const maxIndex = Math.max(0, divs.length - itemsPerPage); 
+        const maxIndex = Math.max(0, myItems.length - itemsPerPage); 
         const newIndex = prevIndex + 1 > maxIndex ? maxIndex : prevIndex + 1;
         console.log(`New visibleIndex (forward): ${newIndex}`);
         return newIndex;
@@ -81,7 +133,7 @@ export default function MySpace() {
       setAnimate(false);
     }, 100);
   };
-  
+
   return (
     <>
     <Navbar/>
@@ -104,19 +156,41 @@ export default function MySpace() {
       <FontAwesomeIcon className="icon" icon={faLessThan} />
         </button>
     <div id = "container">
-      {datatext.slice(visibleIndex, visibleIndex + itemsPerPage).map((div)=>(
-        <div key ={div.id} className={animate? (slidedirection === 'right'? 'div-animate-right': "div-animate-left"): ''}><div className='content'>
-          <div className='photo' ></div> 
-        <div className='text'>
-          <br></br>
-          {div.description}<br></br>{div.contactno}
-          <button className="like-button">
-          < FontAwesomeIcon className='white-heart' icon={faHeart} /> Like
-          </button>
-          <button onClick={()=>handleDeleteupload(div.id)} className='delete'>Delete</button>
-          <br></br><br></br>
-          <button onClick={()=>handleHide(div.id)} className='delete'>{div.hidden? 'Show': 'Hide'}</button>
-        </div>
+      {myItems.slice(visibleIndex, visibleIndex + itemsPerPage).map((div)=>(
+        <div key ={div.item_id} className={animate? (slidedirection === 'right'? 'div-animate-right': "div-animate-left"): ''}><div className='content'>
+          <div className='photo' >
+              <img
+                 src={`http://localhost:5000/api/image/${div.item_id}`} // Use your new image route
+                 alt="Uploaded"
+                 style={{ width: '100%', height: '100%', borderRadius: '10px',objectFit:'cover' }}
+              />
+
+
+            </div> 
+          <div className="text">
+  
+         <div className="text-info">
+        <p>{div.description}</p>
+         <p>{div.contactno}</p>
+       </div>
+
+  
+      <div className="text-likes">
+       <button className="like-button">
+      <FontAwesomeIcon className="white-heart" icon={faHeart} /> 
+       </button>
+      <span className="like-count">12 Likes</span> 
+      </div>
+
+  {/* Sub-div 3: Hide and Delete buttons */}
+  <div className="text-actions">
+    <button onClick={() => handleDeleteupload(div.item_id)} className="delete">Delete</button>
+    <button onClick={() => handleHide(div.item_id)} className="delete">
+      {div.hidden ? 'Show' : 'Hide'}
+    </button>
+  </div>
+</div>
+
       </div>
         </div>
        ))}
@@ -128,7 +202,14 @@ export default function MySpace() {
     <div id = "container">
       {divds.map((divd)=>(
         <div key={divd.id} className='cont-data'><div className = "content">
-        <div className='photo' ></div> 
+        <div className='photo' >
+            <img
+     src={`http://localhost:5000/uploads/${divd.image}`} // change this line
+  alt="Uploaded"
+  style={{ width: '100%', height: '100%', borderRadius: '10px' }}
+/>
+
+          </div> 
         <div className='text'> 
            <div className = 'uname'>{divd.contactno}</div>
            <div className='desc'>{divd.description}</div>
@@ -141,7 +222,7 @@ export default function MySpace() {
       ))}
     </div>    
     <div className='tags'>My Likes</div><br></br></div>
-     {openModal && <Modal closeModal = {setOpenModal} CreateDiv={CreateDiv} CreateDivd={CreateDivd}  />}
+     {openModal && <Modal closeModal = {setOpenModal} CreateDivd={CreateDivd}  />}
    </>
   )
 }

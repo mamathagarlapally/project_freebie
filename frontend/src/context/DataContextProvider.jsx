@@ -3,6 +3,8 @@ import DataContext from './DataContext';
 
 const DataContextProvider = ({children})=>{
   const [datatext, setDatatext] = useState([]);
+  
+  
   // const addDatatext = (data) => {
   //   setDatatext((prevDatatext) => [...prevDatatext, data]); // Append new div data
   // };
@@ -16,7 +18,7 @@ const DataContextProvider = ({children})=>{
   };
   
   const [data, setData] = useState({
-     id: Date.now(), description: '', contactno: '' , optionval: '', count: 0
+     id: Date.now(), photo: null, description: '', contactno: '' , optionval: '', count: 0
   });
 
    return(

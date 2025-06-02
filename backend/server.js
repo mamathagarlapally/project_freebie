@@ -1,58 +1,174 @@
 require('dotenv').config();
 const express = require('express');
-const mysql = require('mysql2');
+const mysql = require('mysql2/promise');
 const cors = require('cors');
-
+const multer = require('multer');
+const upload = multer(); 
 const app = express();
 const PORT = 5000;
+const jwt = require('jsonwebtoken');
+app.use(cors());
+app.use(express.json());
+app.use('/uploads', express.static('uploads'));
 
-app.use(cors()); // Allow requests from different origins (like your React app)// Parse incoming JSON bodies
 
-// MySQL database connection
-const db = mysql.createConnection({
+const SECRET_KEY = process.env.JWT_SECRET
+
+// ✅ MySQL connection pool (no manual connect needed)
+const db = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME
 });
-  
 
-db.connect((err) => {
-  if (err) {
-    console.error('MySQL connection failed:', err);
-    return;
+const verifyToken = (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) return res.status(401).json({ message: "Access denied. No token provided." });
+  try {
+    const decoded = jwt.verify(token, SECRET_KEY);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    res.status(400).json({ message: "Invalid token" });
   }
-  console.log('Connected to MySQL database');
-});
-
-
-app.use(express.json());
+};
 
 app.get('/', (req, res) => {
   res.send('Hello from the backend!');
 });
 
-app.post('/api/Signup', (req, res) =>{
-  console.log("Received:", req.body);
-  const {uname, pwd} = req.body;
-  const sql = "insert into signup (uname, pwd) values (?,?)";
-  db.query(sql, [uname, pwd], (err, result)=>{
-    if (err) return res.status(500).send({message: "Database error", error: err});
-    res.status(200).send({message: "user Register!"});
-  });
+app.post('/api/Signup', async (req, res) => {
+  const { uname, pwd } = req.body;
+
+  try {
+    const [rows] = await db.query('SELECT * FROM signup WHERE uname = ?', [uname]);
+
+    if (rows.length > 0) {
+      console.log("Username already exists:", uname);
+      return res.status(400).json({ message: 'Username already exists. Please choose another.' });
+    }
+
+    await db.query('INSERT INTO signup (uname, pwd) VALUES (?, ?)', [uname, pwd]);
+
+    res.status(201).json({ message: 'Signup successful!' });
+  } catch (error) {
+    console.error('Signup error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
 });
 
-app.post('/api/Login', (req,res)=>{
-  const {username, password} = req.body;
-  const sql = "select *  from signup where uname = ? and pwd = ? ";
-  db.query(sql, [username, password], (err, result)=>{
-    if (err) return res.status(500).send({message: "Database error", error: err});
-    if(result.length > 0){
-      res.send({message: "Login successful!"});
+app.post('/api/Login', async (req, res) => {
+  const { username, password } = req.body;
+
+  try {
+    const [rows] = await db.query(
+      "SELECT * FROM signup WHERE uname = ? AND pwd = ?",
+      [username, password]
+    );
+
+    if (rows.length > 0) {
+      const token = jwt.sign({ username: rows[0].uname }, SECRET_KEY, { expiresIn: '1h' });
+      res.json({ message: "Login successful!", token });
     } else {
-      res.send({message:"wrong credentials"});
+      res.send({ message: "Wrong credentials" });
     }
-  });
+  } catch (err) {
+    res.status(500).send({ message: "Database error", error: err });
+  }
+});
+
+app.post('/api/Modal', upload.single('photo') , async(req, res) =>{
+  const {
+    item_id,
+    option_val,
+    description,
+    contact_no,
+    like_count,
+    uname
+  } = req.body;
+
+  const photo = req.file?.buffer; // This is your image binary
+
+  try {
+    await db.query(
+      'INSERT INTO uploaded_items (item_id, option_val, description, contact_no, like_count, uname, photo) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [item_id, option_val, description, contact_no, like_count, uname, photo]
+    );
+
+    res.status(201).json({ message: 'Item saved successfully!' });
+  } catch (err) {
+    console.error('Error saving item:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+app.get('/api/myitems', verifyToken, async(req, res)=>{
+  try{
+    const [items] = await db.query('select * from uploaded_items where uname = ? ', [req.user.username]);
+    res.json(items);
+  } catch (err) {
+    console.error("❌ Error in /api/myitems:", err);
+     res.status(500).json({message: 'error in fetching items', error:err});
+  }
+});
+
+app.get('/api/image/:item_id', async (req, res) => {
+  try {
+    const item_Id = req.params.item_id;
+    const [rows] = await db.query('SELECT photo FROM uploaded_items WHERE item_id = ?', [item_Id]);
+    if (rows.length === 0) return res.status(404).send('Image not found');
+
+    const img = rows[0].photo;
+    res.setHeader('Content-Type', 'image/jpeg'); // change to image/png if needed
+    res.send(img);
+  } catch (err) {
+    console.error('Error fetching image:', err);
+    res.status(500).send('Error fetching image');
+  }
+});
+
+app.get('/api/publicItems', async(req, res)=>{
+  try{
+    const [items] = await db.query('select * from uploaded_items where hidden = 0');
+    res.json(items);
+  } catch(err){
+    res.status(500).json({message: 'error in fetching items', error:err});
+  }
+});
+
+app.post('/api/handlehide', async (req, res) => {
+  const { id, hidden } = req.body;
+  try {
+    await db.query('UPDATE uploaded_items SET hidden = ? WHERE item_id = ?', [hidden, id]);
+    res.json({ message: 'Hidden status updated' });
+  } catch (err) {
+    res.status(500).json({ message: 'error', error: err });
+  }
+});
+
+app.post('/api/handledeleteupload', async(req, res) =>{
+   const{id} = req.body;
+   try{
+    await db.query('delete from uploaded_items where item_id = ?', [id]);
+    res.json({message: 'item deleted successfully'});
+   } catch(err){
+    res.status(500).json({message: "item deletion failed", error:err});
+   }
+});
+
+app.post('/api/updatelike', async(req, res)=>{
+  const{id} = req.body;
+  try{
+    await db.query('update uploaded_items set like_count = like_count +1 where item_id = ?', [id]);
+    res.json({message: 'successfully handled likes'});
+  } catch(err){
+     res.status(500).json({message: "Like updation failed", error:err});
+  }
+});
+
+app.get('/api/protected', verifyToken, (req, res) => {
+  res.json({ message: `Hello ${req.user.username}, you're authenticated!` });
 });
 
 app.listen(PORT, () => {

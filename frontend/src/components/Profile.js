@@ -37,6 +37,7 @@ export default function Profile() {
         
         </div>
         <div className="profile-info">
+          <br></br>
         <p className="username">Username</p>
       <button className='change-pwd'>Change password?</button>
      </div>

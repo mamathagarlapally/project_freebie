@@ -341,7 +341,7 @@ html, body {
 } */
 .u_name{
    height: 50px;
-   width: 300px;
+   width: 400px;
    border-top-right-radius: 10px;
    border-bottom: 2px solid black;
    background-color: #559DF2;
@@ -398,8 +398,22 @@ html, body {
    height:300px;
    flex: 0 1 50%; 
    border-right: 2px solid black;
+   flex: 0 0 200px;
  }
 
+ .text-info{
+   height: 200px; 
+   margin-left: 10px;
+   margin-top: 10px;
+   
+ }
+ .text-likes{
+   height: 50px;
+   margin-left: 10px;
+ }
+ .text-actions{
+   margin-top: 5px;
+ }
  /* .text {
    flex: 1;
    padding-left: 10px; 
