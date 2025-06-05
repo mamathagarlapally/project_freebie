@@ -103,6 +103,31 @@ app.post('/api/Modal', upload.single('photo') , async(req, res) =>{
   }
 });
 
+app.post('/api/addingdraft', upload.single('photo') , async(req, res) =>{
+  const {
+    item_id,
+    option_val,
+    description,
+    contact_no,
+    uname
+  } = req.body;
+
+  const photo = req.file?.buffer; // This is your image binary
+
+  try {
+    await db.query(
+      'INSERT INTO drafted_items (item_id, option_val, description, contact_no, uname, photo) VALUES (?, ?, ?, ?, ?, ?)',
+      [item_id, option_val, description, contact_no, uname, photo]
+    );
+
+    res.status(201).json({ message: 'Item saved successfully!' });
+  } catch (err) {
+    console.error('Error saving item:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
 app.get('/api/myitems', verifyToken, async(req, res)=>{
   try{
     const [items] = await db.query('select * from uploaded_items where uname = ? ', [req.user.username]);
@@ -110,6 +135,24 @@ app.get('/api/myitems', verifyToken, async(req, res)=>{
   } catch (err) {
     console.error("❌ Error in /api/myitems:", err);
      res.status(500).json({message: 'error in fetching items', error:err});
+  }
+});
+
+app.get('/api/likeditems', verifyToken, async(req, res)=>{
+  try{
+    const [items] = await db.query('select * from liked_items where uname = ? ', [req.user.username]);
+    res.json(items);
+  } catch (err) {
+     res.status(500).json({message: 'error in fetching items', error:err});
+  }
+});
+
+app.get('/api/draftitems', verifyToken, async(req, res)=>{
+  try{
+    const [items] = await db.query('select * from drafted_items where uname = ?', [req.user.username]);
+    res.json(items);
+  } catch(err){
+    res.status(500).json({message: 'error in fetching items', error:err});
   }
 });
 
@@ -127,6 +170,37 @@ app.get('/api/image/:item_id', async (req, res) => {
     res.status(500).send('Error fetching image');
   }
 });
+
+app.get('/api/images/:item_id', async (req, res) => {
+  try {
+    const item_Id = req.params.item_id;
+    const [rows] = await db.query('SELECT photo FROM drafted_items WHERE item_id = ?', [item_Id]);
+    if (rows.length === 0) return res.status(404).send('Image not found');
+
+    const img = rows[0].photo;
+    res.setHeader('Content-Type', 'image/jpeg'); // change to image/png if needed
+    res.send(img);
+  } catch (err) {
+    console.error('Error fetching image:', err);
+    res.status(500).send('Error fetching image');
+  }
+});
+
+app.get('/api/imagesliked/:item_id', async (req, res) => {
+  try {
+    const item_Id = req.params.item_id;
+    const [rows] = await db.query('SELECT photo FROM liked_items WHERE item_id = ?', [item_Id]);
+    if (rows.length === 0) return res.status(404).send('Image not found');
+
+    const img = rows[0].photo;
+    res.setHeader('Content-Type', 'image/jpeg'); // change to image/png if needed
+    res.send(img);
+  } catch (err) {
+    console.error('Error fetching image:', err);
+    res.status(500).send('Error fetching image');
+  }
+});
+
 
 app.get('/api/publicItems', async(req, res)=>{
   try{
@@ -166,6 +240,91 @@ app.post('/api/updatelike', async(req, res)=>{
      res.status(500).json({message: "Like updation failed", error:err});
   }
 });
+
+app.post('/api/draftdelete', async(req, res)=>{
+  const {id} = req.body;
+  if (!id){
+    return res.status(400).json({error: 'It is requires'});
+  }
+  try{
+    await db.query('delete from drafted_items where item_id =?', [id]);
+    res.json({message:"Successfully deleted drafted items"});
+  } catch(err){
+      res.status(500).json({message: "item deletion failed", error:err});
+  }
+});
+
+app.post('/api/uploaddraft', async (req, res) => {
+  const { id } = req.body;
+
+  if (!id) {
+    return res.status(400).json({ error: 'ID is required' });
+  }
+
+  let connection;
+  try {
+    connection = await db.getConnection();  // get a connection from the pool
+    await connection.beginTransaction();
+
+    const insertQuery = `
+      INSERT INTO uploaded_items (item_id, uname, option_val, description, contact_no,photo) 
+      SELECT item_id,uname,option_val,description,contact_no, photo FROM drafted_items WHERE item_id = ?
+    `;
+    const [insertResult] = await connection.execute(insertQuery, [id]);
+
+    if (insertResult.affectedRows === 0) {
+      throw new Error('No row found with the given ID');
+    }
+
+    const deleteQuery = `DELETE FROM drafted_items WHERE item_id = ?`;
+    await connection.execute(deleteQuery, [id]);
+
+    await connection.commit();
+    res.status(200).json({ message: `Row with id ${id} moved successfully.` });
+
+  } catch (error) {
+    if (connection) await connection.rollback();
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  } finally {
+    if (connection) connection.release();  // release connection back to pool
+  }
+});
+
+app.post('/api/storeliked', async (req, res) => {
+  const { id } = req.body;
+
+  if (!id) {
+    return res.status(400).json({ error: 'ID is required' });
+  }
+
+  let connection;
+  try {
+    connection = await db.getConnection();  // get a connection from the pool
+    await connection.beginTransaction();
+
+    const insertQuery = `
+      INSERT INTO liked_items (item_id, uname, option_val, description, contact_no,like_count,photo) 
+      SELECT item_id,uname,option_val,description,contact_no,like_count, photo FROM uploaded_items WHERE item_id = ?
+    `;
+    const [insertResult] = await connection.execute(insertQuery, [id]);
+
+    if (insertResult.affectedRows === 0) {
+      throw new Error('No row found with the given ID');
+    }
+
+    await connection.commit();
+    res.status(200).json({ message: `Row with id ${id} moved successfully.` });
+
+  } catch (error) {
+    if (connection) await connection.rollback();
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  } finally {
+    if (connection) connection.release();  // release connection back to pool
+  }
+});
+
 
 app.get('/api/protected', verifyToken, (req, res) => {
   res.json({ message: `Hello ${req.user.username}, you're authenticated!` });

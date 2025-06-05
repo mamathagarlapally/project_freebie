@@ -34,6 +34,16 @@ export default function Maincomponent({item}) {
     }
   } ,[filteredItems]);
 
+  const storelikeitems = async(id)=>{
+    try {
+      await axios.post('http://localhost:5000/api/storeliked', {
+        id: id
+      });
+    } catch(err){
+      console.error('error in storing the liked items', err);
+    }
+  }
+
   const handleOnClick = async(id) => {
     console.log("id of the divs")
     console.log(id);
@@ -44,6 +54,7 @@ export default function Maincomponent({item}) {
     } catch(err){
       console.error('like updation failed:', err);
     }
+    storelikeitems(id);
     // setDatatext((prevDatatext) =>
     //   prevDatatext.map((div) =>
     //     div.id === id ? { ...div, count: (div.count + 1) } : div

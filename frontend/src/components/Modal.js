@@ -75,13 +75,32 @@ export default function Modal({closeModal, CreateDiv, CreateDivd}) {
       console.log(err);
     }
   }; 
-  const handleadddraft = (event)=>{
+  const handleadddraft = async(event)=>{
     event.preventDefault(); 
     console.log(data);
     CreateDivd(data);
     //addDatatext(data);
     console.log(data);
     closeModal(false);
+     const uname = jwtDecode(localStorage.getItem("token")).username;
+    const formData = new FormData();
+    formData.append('item_id', data.id);
+    formData.append('option_val', data.optionval);
+    formData.append('description', data.description);
+    formData.append('contact_no', data.contactno);
+    formData.append("uname", uname);
+    formData.append('photo', data.photo); 
+    try{
+        await axios.post('http://localhost:5000/api/addingdraft', formData, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+    }
+    catch(err){
+      console.log(err);
+    }
   }
 
   
