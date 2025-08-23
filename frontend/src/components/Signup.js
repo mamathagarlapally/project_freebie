@@ -30,7 +30,6 @@ export default function Signup() {
     console.error(err);
    }
    }
-
   };
   return (
     <div>

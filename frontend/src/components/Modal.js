@@ -22,15 +22,13 @@ export default function Modal({closeModal, CreateDiv, CreateDivd}) {
   const fileInputRef = useRef(null);
 
   const handleClick = () => {
-    fileInputRef.current.click(); // Programma
-    // tically click hidden input
-    
+    fileInputRef.current.click(); 
   };
 
   const handleFileChange = (e) => {
-    console.log('File input changed');
+    //console.log('File input changed');
     const file = e.target.files[0];
-    console.log('Selected file:', file);
+    //console.log('Selected file:', file);
     const previewUrl = URL.createObjectURL(file);
     setClicked(true);
 

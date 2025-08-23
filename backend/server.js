@@ -12,6 +12,7 @@ app.use(express.json());
 app.use('/uploads', express.static('uploads'));
 
 
+
 const SECRET_KEY = process.env.JWT_SECRET
 
 // ✅ MySQL connection pool (no manual connect needed)
@@ -50,7 +51,11 @@ app.post('/api/Signup', async (req, res) => {
     }
 
     await db.query('INSERT INTO signup (uname, pwd) VALUES (?, ?)', [uname, pwd]);
-
+    try {
+    await db.query('INSERT INTO user_info (username, password) VALUES (?, ?)', [uname, pwd]);
+  } catch (err) {
+    console.error('Error inserting into user_info:', err);
+  }
     res.status(201).json({ message: 'Signup successful!' });
   } catch (error) {
     console.error('Signup error:', error);
@@ -95,7 +100,7 @@ app.post('/api/Modal', upload.single('photo') , async(req, res) =>{
       'INSERT INTO uploaded_items (item_id, option_val, description, contact_no, like_count, uname, photo) VALUES (?, ?, ?, ?, ?, ?, ?)',
       [item_id, option_val, description, contact_no, like_count, uname, photo]
     );
-
+    await db.query('update user_info set cont_no = ? where username = ?',[contact_no, uname]);
     res.status(201).json({ message: 'Item saved successfully!' });
   } catch (err) {
     console.error('Error saving item:', err);
@@ -325,6 +330,121 @@ app.post('/api/storeliked', async (req, res) => {
   }
 });
 
+app.post('/api/adduserdetails', async(req,res)=>{
+  const {username, photo} = req.body;
+  try{
+   await db.query('insert into user_info (username, photo) values (?,?)',[username, photo]);
+  } catch(err){
+    res.status(500).json({message: "user details addition failed", error:err});
+  }
+})
+
+app.post('/api/oldpwdmatch', async(req,res)=>{
+  const {username, oldpwd} = req.body;
+  try{
+    const [rows] = await db.query('select password from user_info where username = ?',[username]);
+    if (rows.length > 0) {
+      if (rows[0].password === oldpwd){
+     res.send({message:'username and old password matched'});
+    }
+    else{
+      res.send({message:'incorrect password'});
+    }
+    }
+    
+  }catch(err){
+    console.error(err);
+  }
+});
+
+app.post('/api/addnewpwd', async(req,res)=>{
+  const {username, newpwd} = req.body;
+  try{
+    await db.query('update user_info set password = ? where username =?',[newpwd, username]); 
+    await db.query('update signup set pwd = ? where uname = ?', [newpwd, username]);
+  }
+  catch(err){
+    console.error(err);
+  }
+});
+
+app.post('/api/addemail', async(req, res)=>{
+  const {username, emailid} = req.body;
+  try{
+    await db.query('update user_info set mailid = ? where username = ?', [emailid,username]);
+  } catch(err){
+    console.error(err);
+  }
+})
+
+app.post('/api/uploadprofilepic',upload.single('photo'), async(req,res)=>{
+  const {username} = req.body;
+  const photo = req.file?.buffer;
+  try{
+    await db.query('update user_info set photo = ? where username = ?',[photo, username]);
+  res.status(201).json({ message: 'Item saved successfully!' });
+  } catch (err) {
+    console.error('Error saving item:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+app.get('/api/imaging/:uname', async (req, res) => {
+  try {
+    const item_Id = req.params.uname;
+    const [rows] = await db.query('SELECT photo FROM user_info WHERE username = ?', [item_Id]);
+    if (rows.length === 0) return res.status(404).send('Image not found');
+
+    res.setHeader('Content-Type', rows[0].photo_type || 'image/jpeg');
+    res.send(rows[0].photo);
+  } catch (err) {
+    console.error('Error fetching image:', err);
+    res.status(500).send('Error fetching image');
+  }
+});
+
+app.get('/fetchemail', async(req, res)=>{
+  const {username} = req.query;
+  try {
+    const [rows] = await db.query(
+      'SELECT mailid FROM user_info WHERE username = ?',
+      [username]
+    );
+    if (rows.length > 0) {
+      res.json(rows[0].mailid);
+    } else {
+      res.status(404).json({ error: "User not found" });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+app.get('/fetchcontact', async(req, res)=>{
+  const {username} = req.query;
+  try {
+    const [rows] = await db.query(
+      `select distinct contact_no from uploaded_items where uname = ? and contact_no <> '' and contact_no is not null`,
+      [username]
+    );
+    if (rows.length > 0) {
+      res.json(rows[0].contact_no);
+      console.log("server testing email:", rows[0].contact_no);
+    } else {
+      res.status(404).json({ error: "User not found" });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+
+app.get("/profile", verifyToken, (req, res) => {
+  const username = req.user.username;  
+    res.json({username });
+});
 
 app.get('/api/protected', verifyToken, (req, res) => {
   res.json({ message: `Hello ${req.user.username}, you're authenticated!` });
