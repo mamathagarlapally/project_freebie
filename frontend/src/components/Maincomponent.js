@@ -8,17 +8,59 @@ import { useEffect } from 'react';
 
 
 export default function Maincomponent({item}) {
-  //const [divs, setDivs] = useState([]);
-  //const { datatext, setDatatext } = useContext(DataContext);
-  //const [counter, setCounter] = useState(0);
- 
   const [publicItems, setPublicItems] = useState([]);
+  const [email, setEmail] = useState();
+  const [username, setUsername] = useState();
+  const [contno, setContno] = useState();
+  const [likeduser, setLikeduser] = useState();
 
+ useEffect(() => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    fetch("http://localhost:5000/profile", {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      }
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Failed to fetch profile");
+        }
+        return res.json();  
+      })
+      .then((data) => {
+        setLikeduser(data.username); 
+      })
+      .catch((err) => {
+        console.error("Error fetching profile:", err);
+      });
+  }
+}, []);
+
+
+  
+  useEffect(()=>{
+    const fetchcontactno = async()=>{
+      if(!username) return;
+      try{
+        const res = await axios.get('http://localhost:5000/fetchcontinfo',{
+          params : {username:username}
+        });
+        setContno(res.data);
+      } catch(err){
+        console.error(err);
+      }
+    }
+    fetchcontactno();
+  }, [username]);
   useEffect(()=>{
     const fetchPublicItems = async()=>{
       try{
         const res = await axios.get('http://localhost:5000/api/publicItems');
         setPublicItems(res.data); 
+        setUsername(res.data[0]?.uname);
       }catch (err) {
         console.error("Failed to fetch public items:", err);
       }
@@ -34,34 +76,41 @@ export default function Maincomponent({item}) {
     }
   } ,[filteredItems]);
 
-  const storelikeitems = async(id)=>{
-    try {
-      await axios.post('http://localhost:5000/api/storeliked', {
+  // 
+  const handleOnClick = async (id) => {
+  try {
+    // Step 1: Try inserting into liked_items
+    const insertRes = await axios.post('http://localhost:5000/api/storeliked', {
+      id: id,
+      username: likeduser
+    });
+
+    // Step 2: If insert was successful, update like count
+    if (insertRes.status === 200) {
+      await axios.post('http://localhost:5000/api/updatelike', {
         id: id
       });
-    } catch(err){
-      console.error('error in storing the liked items', err);
     }
+  } catch (err) {
+    console.error('Error while liking:', err);
   }
+};
 
-  const handleOnClick = async(id) => {
-    console.log("id of the divs")
-    console.log(id);
-    try{
-      await axios.post('http://localhost:5000/api/updatelike', {
-        id:id
-      });
-    } catch(err){
-      console.error('like updation failed:', err);
-    }
-    storelikeitems(id);
-    // setDatatext((prevDatatext) =>
-    //   prevDatatext.map((div) =>
-    //     div.id === id ? { ...div, count: (div.count + 1) } : div
-    //   )
-    // );
-  };
   
+  useEffect(()=>{
+    const fetchemail = async()=>{
+      if (!username) return; 
+      try{
+        const res = await axios.get('http://localhost:5000/fetchingemail',{
+          params : {username:username}
+        });
+        setEmail(res.data);
+      } catch(err){
+        console.error(err);
+      }
+    }
+    fetchemail();
+  },[username]);
  
   return (
     <>
@@ -73,15 +122,21 @@ export default function Maincomponent({item}) {
           {!div.hidden && (<div className = "content">
         <div className='photo' >
               <img
-                 src={`http://localhost:5000/api/image/${div.item_id}`} // Use your new image route
+                 src={`http://localhost:5000/api/image/${div.item_id}`}
                  alt="Uploaded"
                  style={{ width: '100%', height: '100%', borderRadius: '10px' }}
               />
           </div> 
-        <div className='text'> 
-           <div className = 'u_name'>profilephoto{div.uname}</div> 
+            <div className='text'>
+              <div className='u_name'><div className='prof-pic'><img
+                src={`http://localhost:5000/api/profimage/${div.uname}`}
+                alt=""
+                style={{ width: '100%', height: '100%', borderRadius: '50%' }}
+              /></div><p><span className="naming">{div.uname}</span>
+                  <br />
+                  {email}</p></div> 
            <div className='desc'>{div.description}</div>
-           <div className = 'contno'>{div.contactno}
+           <div className = 'contno'>Contact Number: {div.contactno || contno}
            </div>
           <br></br>
            <button onClick = {()=>handleOnClick(div.item_id)} className="like-button">

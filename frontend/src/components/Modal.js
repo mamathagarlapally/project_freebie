@@ -75,12 +75,12 @@ export default function Modal({closeModal, CreateDiv, CreateDivd}) {
   }; 
   const handleadddraft = async(event)=>{
     event.preventDefault(); 
-    console.log(data);
-    CreateDivd(data);
+    //console.log(data);
+    //CreateDivd(data);
     //addDatatext(data);
-    console.log(data);
+    //console.log(data);
     closeModal(false);
-     const uname = jwtDecode(localStorage.getItem("token")).username;
+    const uname = jwtDecode(localStorage.getItem("token")).username;
     const formData = new FormData();
     formData.append('item_id', data.id);
     formData.append('option_val', data.optionval);

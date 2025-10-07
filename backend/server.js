@@ -144,8 +144,9 @@ app.get('/api/myitems', verifyToken, async(req, res)=>{
 });
 
 app.get('/api/likeditems', verifyToken, async(req, res)=>{
+  const uname = req.query.username;
   try{
-    const [items] = await db.query('select * from liked_items where uname = ? ', [req.user.username]);
+    const [items] = await db.query('select * from liked_items where liked_user = ? ', [uname]);
     res.json(items);
   } catch (err) {
      res.status(500).json({message: 'error in fetching items', error:err});
@@ -168,13 +169,29 @@ app.get('/api/image/:item_id', async (req, res) => {
     if (rows.length === 0) return res.status(404).send('Image not found');
 
     const img = rows[0].photo;
-    res.setHeader('Content-Type', 'image/jpeg'); // change to image/png if needed
+    res.setHeader('Content-Type', 'image/jpeg'); 
     res.send(img);
   } catch (err) {
     console.error('Error fetching image:', err);
     res.status(500).send('Error fetching image');
   }
 });
+
+app.get('/api/profimage/:uname', async (req, res) => {
+  try {
+    const uname = req.params.uname;
+    const [rows] = await db.query('SELECT photo FROM user_info WHERE username = ?', [uname]);
+    if (rows.length === 0) return res.status(404).send('Image not found');
+
+    const img = rows[0].photo;
+    res.setHeader('Content-Type', 'image/jpeg'); 
+    res.send(img);
+  } catch (err) {
+    console.error('Error fetching image:', err);
+    res.status(500).send('Error fetching image');
+  }
+});
+
 
 app.get('/api/images/:item_id', async (req, res) => {
   try {
@@ -183,7 +200,7 @@ app.get('/api/images/:item_id', async (req, res) => {
     if (rows.length === 0) return res.status(404).send('Image not found');
 
     const img = rows[0].photo;
-    res.setHeader('Content-Type', 'image/jpeg'); // change to image/png if needed
+    res.setHeader('Content-Type', 'image/jpeg'); 
     res.send(img);
   } catch (err) {
     console.error('Error fetching image:', err);
@@ -198,8 +215,7 @@ app.get('/api/imagesliked/:item_id', async (req, res) => {
     if (rows.length === 0) return res.status(404).send('Image not found');
 
     const img = rows[0].photo;
-    res.setHeader('Content-Type', 'image/jpeg'); // change to image/png if needed
-    res.send(img);
+    res.setHeader('Content-Type', 'image/jpeg'); 
   } catch (err) {
     console.error('Error fetching image:', err);
     res.status(500).send('Error fetching image');
@@ -230,6 +246,7 @@ app.post('/api/handledeleteupload', async(req, res) =>{
    const{id} = req.body;
    try{
     await db.query('delete from uploaded_items where item_id = ?', [id]);
+    await db.query('delete from liked_items where item_id = ?',[id]);
     res.json({message: 'item deleted successfully'});
    } catch(err){
     res.status(500).json({message: "item deletion failed", error:err});
@@ -268,7 +285,7 @@ app.post('/api/uploaddraft', async (req, res) => {
 
   let connection;
   try {
-    connection = await db.getConnection();  // get a connection from the pool
+    connection = await db.getConnection();  
     await connection.beginTransaction();
 
     const insertQuery = `
@@ -292,12 +309,12 @@ app.post('/api/uploaddraft', async (req, res) => {
     console.error(error);
     res.status(500).json({ error: error.message });
   } finally {
-    if (connection) connection.release();  // release connection back to pool
+    if (connection) connection.release();  
   }
 });
 
 app.post('/api/storeliked', async (req, res) => {
-  const { id } = req.body;
+  const { id , username} = req.body
 
   if (!id) {
     return res.status(400).json({ error: 'ID is required' });
@@ -309,10 +326,11 @@ app.post('/api/storeliked', async (req, res) => {
     await connection.beginTransaction();
 
     const insertQuery = `
-      INSERT INTO liked_items (item_id, uname, option_val, description, contact_no,like_count,photo) 
-      SELECT item_id,uname,option_val,description,contact_no,like_count, photo FROM uploaded_items WHERE item_id = ?
+      INSERT INTO liked_items (item_id, uname, option_val, description, contact_no,like_count,photo, liked_user) 
+      SELECT item_id,uname,option_val,description,contact_no,like_count, photo, ? FROM uploaded_items WHERE item_id = ?
     `;
-    const [insertResult] = await connection.execute(insertQuery, [id]);
+    
+    const [insertResult] = await connection.execute(insertQuery, [username,id]);
 
     if (insertResult.affectedRows === 0) {
       throw new Error('No row found with the given ID');
@@ -364,6 +382,16 @@ app.post('/api/addnewpwd', async(req,res)=>{
     await db.query('update signup set pwd = ? where uname = ?', [newpwd, username]);
   }
   catch(err){
+    console.error(err);
+  }
+});
+
+app.post('/api/changecontact', async(req,res)=>{
+  const {username, cont_no} = req.body;
+  try{
+    await db.query('update user_info set cont_no = ? where username = ?', [cont_no, username]);
+    await db.query('update uploaded_items set contact_no = ? where uname = ?', [cont_no, username]);
+  } catch(err){
     console.error(err);
   }
 });
@@ -421,6 +449,24 @@ app.get('/fetchemail', async(req, res)=>{
   }
 });
 
+app.get('/fetchingemail', async(req, res)=>{
+  const {username} = req.query;
+  try {
+    const [rows] = await db.query(
+      'SELECT mailid FROM user_info WHERE username = ?',
+      [username]
+    );
+    if (rows.length > 0) {
+      res.json(rows[0].mailid);
+    } else {
+      res.status(404).json({ error: "User not found" });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 app.get('/fetchcontact', async(req, res)=>{
   const {username} = req.query;
   try {
@@ -430,7 +476,24 @@ app.get('/fetchcontact', async(req, res)=>{
     );
     if (rows.length > 0) {
       res.json(rows[0].contact_no);
-      console.log("server testing email:", rows[0].contact_no);
+    } else {
+      res.status(404).json({ error: "User not found" });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+app.get('/fetchcontinfo', async(req, res)=>{
+  const username = req.query.username;
+  try {
+    const [rows] = await db.query(
+      `select distinct cont_no from user_info where username = ? and cont_no <> '' and cont_no is not null`,
+      [username]
+    );
+    if (rows.length > 0) {
+      res.json(rows[0].cont_no);
     } else {
       res.status(404).json({ error: "User not found" });
     }

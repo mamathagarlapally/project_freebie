@@ -39,7 +39,9 @@ html, body {
    border-bottom-right-radius: 6px;
    height:32px;
    width: 40px;
-   border: 2px solid black;
+   border-top: 2px solid black;
+   border-right: 2px solid black;
+   border-bottom: 2px solid black;
    justify-content: center;
    align-items: center;
 } 
@@ -56,7 +58,6 @@ html, body {
 .profile, .MySpace, .home{
    height: 30px;
    width: 80px;
-   border: 2px solid black;
    border-radius: 6px;
    text-align: center;
    display: flex;
@@ -65,6 +66,8 @@ html, body {
    background-color: #559DF2;
    align-items: center;
    margin-right: 20px;
+   cursor: pointer;
+
 }
 
 .link{
@@ -80,6 +83,7 @@ html, body {
 }
 
 .Apron, .Drafter, .Calci, .qp, .Books, .other{
+   padding: 8px 18px;
    margin: 50px;
    height: 30px;
    width : 150px;
@@ -87,6 +91,10 @@ html, body {
    border-radius: 10px;
    text-align: center;
    background-color: #559DF2;
+   border: none;
+  cursor: pointer;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .Apron:hover, .Drafter:hover, .Calci:hover, .qp:hover, .Books:hover, .other:hover, .add-item:hover, .login-btn:hover, .sign-btn:hover, .reg-btn:hover, .Add:hover, .addtodraft:hover, .upload-button:hover, .delete:hover{
@@ -331,6 +339,7 @@ html, body {
 
 #container{
    display: flex;
+   position: relative;
 }
 #component{
    display: grid;
@@ -341,26 +350,80 @@ html, body {
 } */
 .u_name{
    height: 50px;
-   width: 400px;
+   width: 399px;
    border-top-right-radius: 10px;
-   border-bottom: 2px solid black;
-   background-color: #559DF2;
+   /* background-color: #559DF2; */
+   display: flex;
+}
+.prof-pic{
+   margin-left: 10px;
+   height: 45px;
+   width: 45px;
+   border-radius: 50%;
 }
 .desc{
    height: 200px;
-   border-bottom: 1px solid black;
 }
- .content{
+ /* .content{
    margin-top: 50px;
    margin-bottom: 50px;
    margin-left: 75px;
    height: 300px;
    width: 600px;
-   border: 2px solid black;
-   border-radius: 12px;
-   display: flex;
-   /* position: relative; */
- }
+   background: #fff;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+   /* border: 2px solid black; 
+   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+   border-radius: 12px; */
+   /* display: flex; */
+   /* position: relative; 
+ } */
+ 
+ #containers {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); 
+  gap: 24px;
+  margin: 20px 0;
+  position: relative;
+}
+
+.content {
+  margin: 50px auto;
+  height: auto; 
+  width: 650px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: row;
+}
+
+.content:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+}
+
+.sliding-container{
+  position: relative; 
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px 20px;
+}
+
+.text {
+  flex: 1;
+  margin-left: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
 
  /* styles.css */
  @keyframes slideInRight {
@@ -385,19 +448,25 @@ html, body {
    }
  }
  
- .slide-item-left {
+ /* .slide-item-left {
    animation: slideInLeft 0.5s ease-in-out;
  }
  
  .slide-item-right {
    animation: slideInRight 0.5s ease-in-out;
- }
+ } */
+
+ .div-animate-left {
+  animation: slideInLeft 0.5s ease-in-out;
+}
+.div-animate-right {
+  animation: slideInRight 0.5s ease-in-out;
+}
  
  
  .photo{
    height:300px;
    flex: 0 1 50%; 
-   border-right: 2px solid black;
    flex: 0 0 200px;
  }
 
@@ -432,23 +501,34 @@ html, body {
    border: none;
    background-color: white;
  }
+ .iconslide, .iconslide2 {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 2rem;
+}
 .iconslide{
   float: right;
   position: absolute;
   left: 1365px;
-  top: 350px;
+  top: 200px;
   z-index: 1;
   border: none;
   background-color: white;
+  background: transparent;
+  cursor: pointer;
 }
 .iconslide2{
    float: left;
    position: absolute;
    left: 100px;
-   top: 350px;
+   top: 200px;
    z-index: 1;
    border: none;
    background-color: white;
+   background: transparent;
+   text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+   cursor:pointer;
 }
 .icon{
    height: 40px;
@@ -477,121 +557,228 @@ html, body {
    background-color: #2682EE;
  }
 
- /* profile page */
- /* .profile-box {
-   display: flex;
-   flex-direction: column;
-   align-items: center;
-   margin-left: 150px;
-   margin-top: 25px;
-   height: 500px;
-   width: 1200px;
-   border: 2px solid black;
-   border-radius: 12px;
-   position: relative;
- } */
- 
- /* .profile-pic-box {
-   height: 100px;
-   border-bottom: 2px solid black;
-   border-top-left-radius: 11px;
-   border-top-right-radius: 11px;
-   background-color: #559DF2;
- } */
- 
-.profile-page{
-   display: flex;
-   margin-top: 50px;
-   margin-left: 100px;
-}
-.profile-pic{
-   height: 500px;
-   width: 300px;
-   border-right: none;
-   border: 2px solid black;
-}
-
-.profile-info{
-   height: 500px;
-   width: 950px;
-   /* border: 2px solid black; */
-   border-top: 2px solid black;
-   border-bottom: 2px solid black;
-   border-right: 2px solid black;
-}
-
-.profile-photo{
-   height: 150px;
-   width: 150px;
-   border: 2px solid black;
-   border-radius: 50%;
-   margin: 100px;
-   position: relative;
-}
-
-.profile-heading{
-   font-size: large;
-   align-items: center;
-   justify-content: center;
-   display: flex;
-}
-
-.uname-div{
-   height: 30px;
-   width: 600px;
-   border: 1px solid black;
-   border-radius: 12px;
+ .header-para{
    margin-left: 10px;
+ }
+ .naming {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #222;
 }
 
-.edit-data{
-   margin-left: 20px;
+.header-para .email {
+  font-size: 0.85rem;
+  color: #666;
 }
 
-.edit-profile{
-   margin-top: 50px;
+ /* profile page */
+.profile-page {
+  display: flex;
+  gap: 30px;
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 30px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+/* .profile-photo-container {
+  position: relative;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+} */
+
+.profile-photo-container {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  margin: 0 auto; 
+}
+
+.profile-pic {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ccc;
+}
+/* .profile-placeholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  color: #888;
+  border: 2px dashed #ccc; 
+}*/
+.camera-btn {
+  position: absolute;
+  bottom: 10px;
+  right: 30%;
+  background: white;
+  border: 1px solid #aaa;
+  border-radius: 50%;
+  padding: 6px;
+  cursor: pointer;
+}
+
+.camera-btn svg {
+  font-size: 16px;
+  color: #333;
+}
+
+.profile-info {
+  flex: 2;
+}
+
+.profile-heading {
+  margin-bottom: 20px;
+  font-size: 20px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.label {
+  flex: 1;
+  font-weight: bold;
+  color: #333;
+}
+
+.value {
+  flex: 2;
+  color: #555;
+}
+
+.edit {
+  margin-left: 10px;
+}
+
+.edit-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: #559DF2;
+}
+
+.edit-btn:hover {
+  color: #2682EE;
+}
+
+.edit-input {
+  width: 100%;
+  max-width: 250px;
+  padding: 6px 10px;
+  margin-bottom: 6px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.save-btn {
+  margin-left: 8px;
+  padding: 6px 12px;
+  border: none;
+  background: #559DF2;
+  color: black;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.save-btn:hover {
+  background: #2682EE;
+}
+
+.pwd-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.edit-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 
-.uname-btn{
-   margin-left: 20px;
-   display: flex;
-   align-items: center;
-   gap: 6px;
-   background-color: white;
-   border: none;
+.contents {
+  display: flex;               
+  align-items: stretch;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  height: auto;
+  width: 600px;
+  padding: 15px;
+  margin: 20px auto;
+  gap: 20px;
 }
 
-.edit-email{
-   border-bottom: 2px solid black;
-   width: 500px;
-   margin-left: 20px;
+.photos {
+  flex: 1;                       
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.style-pwd{
-   height: 400px;
-   margin-left: 150px;
-
+.photos img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
 }
 
-.change-password{
-   border: none;
-   background-color: white;
+.texts {
+  flex: 1;                       
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; 
 }
 
-.icon-btn{
-   position: absolute;
-   bottom: 0px;
-   right:20px;
-   z-index: 10;
-   background-color: white;
-   border-radius: 50%;
+.text-info {
+  margin-bottom: 10px;
 }
 
-.cont-info{
-   display: flex;
+.text-likes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: auto;
 }
 
-.change-pwd{
-   display: flex;
+.like-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
 }
+/* 
+.text-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.text-actions button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+ */
