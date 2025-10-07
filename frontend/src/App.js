@@ -5,6 +5,7 @@ import MySpace from './components/MySpace';
 import Profile from './components/Profile';
 import Login from './components/Login';
 import Signup from './components/Signup';
+import Search from './components/Search';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import './App.css';
 import DataContextProvider from './context/DataContextProvider';
@@ -23,6 +24,7 @@ function App() {
         <Route path = "/Signup" element = {<Signup/>}/>
           <Route path="/MySpace" element={<MySpace />}  />
           <Route path="/Profile" element={<Profile />} />
+          <Route path="/search" element={<Search />} />
       </Routes>
     </BrowserRouter>
     </DataContextProvider>

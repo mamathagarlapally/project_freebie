@@ -1,20 +1,29 @@
 import React from 'react'
+import {useContext} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 //import {useState} from 'react';
-import {Link} from 'react-router-dom';
+import {Link,useNavigate} from 'react-router-dom';
+import DataContext from '../context/DataContext';
 
 export default function Navbar() {
-  // const openHtmlPage = () => { 
-  //   window.open('/profile.html', '_blank', 'noopener,noreferrer');
-  // };
-  
-  // const [showMySpace, setShowMySpace] = useState(false);
+    const { uname,setUname } = useContext(DataContext);
+     
+    const navigate = useNavigate();
 
-  // const handleMySpace = () => {
-  //   setShowMySpace(true); 
-  // };
+  const handleChange = (e) => {
+    setUname(e.target.value);
+  };
+
+  const handleSearchClick = () => {
+    if (uname && uname.trim() !== "") {
+      navigate('/search');  // ✅ go to search page
+    } else {
+      alert("Please enter something to search!");
+    }
+  };
+    
   return (
     <>
     <div>
@@ -22,9 +31,9 @@ export default function Navbar() {
          <Link to = "/"><div className="logo">       
          </div> </Link>
          <div className="searchbar">
-          <input placeholder = "Search Freebie" className="searchinput"/>
+          <input placeholder = "Search Freebie" className="searchinput" onChange={handleChange}/>
            <div className="searchiconplace">
-            <div className="searchicon">
+            <div className="searchicon" onClick={handleSearchClick}>
             <FontAwesomeIcon icon={faSearch} />
             </div>
            </div>

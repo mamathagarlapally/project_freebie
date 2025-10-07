@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState} from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
-//import DataContext from '../context/DataContext';
 import { useEffect } from 'react';
 
 
@@ -13,6 +12,7 @@ export default function Maincomponent({item}) {
   const [username, setUsername] = useState();
   const [contno, setContno] = useState();
   const [likeduser, setLikeduser] = useState();
+
 
  useEffect(() => {
   const token = localStorage.getItem('token');

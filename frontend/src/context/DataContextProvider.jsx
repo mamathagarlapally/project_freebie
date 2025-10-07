@@ -20,9 +20,10 @@ const DataContextProvider = ({children})=>{
   const [data, setData] = useState({
      id: Date.now(), photo: null, description: '', contactno: '' , optionval: '', count: 0
   });
-
+   
+  const [uname, setUname] = useState('');
    return(
-     <DataContext.Provider value = {{datatext , setDatatext,addDatatext, data, setData}}>{children}</DataContext.Provider>
+     <DataContext.Provider value = {{datatext , setDatatext,addDatatext, data, setData, uname, setUname}}>{children}</DataContext.Provider>
    )
 };
 
